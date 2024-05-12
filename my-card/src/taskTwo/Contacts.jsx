@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ContactList from "./ContactList";
+import ContactForm from "./ContactForm";
 
 const initialContacts = [
   { id: 1, name: "John Doe", email: "john@example.com", phone: "123-456-7890" },
@@ -16,104 +18,6 @@ const initialContacts = [
   },
 ];
 
-const Contact = ({ contact, deleteContact, editContact }) => (
-  <div>
-    <p>
-      <strong>Name:</strong> {contact.name}
-    </p>
-    <p>
-      <strong>Email:</strong> {contact.email}
-    </p>
-    <p>
-      <strong>Phone:</strong> {contact.phone}
-    </p>
-    <button onClick={() => editContact(contact)}>Edit</button>
-    <button onClick={() => deleteContact(contact.id)}>Delete</button>
-  </div>
-);
-
-const ContactList = ({ contacts, deleteContact, editContact }) => (
-  <div>
-    <h2>Contacts</h2>
-    {contacts.map((contact) => (
-      <Contact
-        key={contact.id}
-        contact={contact}
-        deleteContact={deleteContact}
-        editContact={editContact}
-      />
-    ))}
-  </div>
-);
-
-const ContactForm = ({ contact, addContact, updateContact, cancelEdit }) => {
-  const [name, setName] = useState(contact ? contact.name : "");
-  const [email, setEmail] = useState(contact ? contact.email : "");
-  const [phone, setPhone] = useState(contact ? contact.phone : "");
-  const [errors, setErrors] = useState({});
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newErrors = validateForm();
-    if (Object.keys(newErrors).length === 0) {
-      const newContact = { name, email, phone };
-      if (contact) {
-        updateContact({ ...contact, ...newContact });
-      } else {
-        addContact({ ...newContact, id: Date.now() });
-      }
-      setName("");
-      setEmail("");
-      setPhone("");
-      setErrors({});
-    } else {
-      setErrors(newErrors);
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!name.trim()) newErrors.name = "Name is required";
-    if (!email.trim()) newErrors.email = "Email is required";
-    else if (!emailRegex.test(email)) newErrors.email = "Invalid email address";
-    if (!phone.trim()) newErrors.phone = "Phone number is required";
-    return newErrors;
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <h2>{contact ? "Edit Contact" : "Add Contact"}</h2>
-      <label>Name</label>
-      <input
-        type="text"
-        placeholder="full name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      {errors.name && <p>{errors.name}</p>}
-      <label>Email</label>
-      <input
-        type="email"
-        placeholder="info@example.com"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      {errors.email && <p>{errors.email}</p>}
-      <label>Phone</label>
-      <input
-        type="text"
-        placeholder="enter your phone number"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-      />
-      {errors.phone && <p>{errors.phone}</p>}
-      <button type="submit">{contact ? "Update" : "Add"}</button>
-      {contact && <button onClick={cancelEdit}>Cancel</button>}
-    </form>
-  );
-};
-
 const Contacts = () => {
   const [contacts, setContacts] = useState(initialContacts);
   const [editingContact, setEditingContact] = useState(null);
@@ -122,6 +26,8 @@ const Contacts = () => {
     setContacts(
       contacts.map((contact) =>
         contact.id === updatedContact.id ? updatedContact : contact
+        // If the id property of the contact object is equal to the id property of the updatedContact object,  Result is assigned the value of updatedContact.
+        // result is assigned the value of contact.
       )
     );
     setEditingContact(null);
